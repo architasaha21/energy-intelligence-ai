@@ -11,6 +11,10 @@ Energy Forecasting ML service and converts them into:
 - Energy-saving recommendations
 - Intervention simulations
 
+The current optimization service is a temporary simulation used to
+demonstrate the agent pipeline. It is not the final optimization engine;
+that integration will be provided by Member 3.
+
 ## Architecture
 
 ```text
