@@ -9,7 +9,7 @@ from schemas.forecast import (
 
 class ForecastClient:
     """
-    Client responsible for communicating with Member 1's
+    Client responsible for communicating with the external
     Energy Forecasting API.
     """
 

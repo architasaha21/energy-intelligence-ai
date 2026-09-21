@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-# Base URL of Member 1's ML forecasting API
+# Base URL of the external ML forecasting API
 ML_API_URL = os.getenv(
     "ML_API_URL",
     "http://127.0.0.1:8000"
