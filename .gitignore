@@ -1,0 +1,26 @@
+# Environment and secrets
+.env
+venv/
+.venv/
+
+# Python generated files
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Temporary manual connection checks
+test_connection.py
+test_groq.py
+test_history.py
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local operating-system files
+.DS_Store
+Thumbs.db
