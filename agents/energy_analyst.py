@@ -41,13 +41,11 @@ class EnergyAnalystAgent:
         context = {
             "forecast": forecast,
 
-            "weekly_forecast": weekly_forecast,
-
             "historical_summary": historical_summary,
 
             "statistical_analysis": statistical_analysis,
 
-            "zone_evidence": zone_evidence
+            "zone_evidence": zone_evidence[:5]
         }
 
         prompt = f"""
