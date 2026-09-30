@@ -13,6 +13,11 @@ ML_API_URL = os.getenv(
     "http://127.0.0.1:8000"
 )
 
+# Base URL of the optimization engine API
+OPTIMIZER_API_URL = os.getenv(
+    "OPTIMIZER_API_URL",
+    "http://127.0.0.1:8002"
+)
 
 # Groq API key used by our AI agents
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
