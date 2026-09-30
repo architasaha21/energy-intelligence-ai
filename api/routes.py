@@ -5,7 +5,8 @@ from agents.recommendation_agent import RecommendationAgent
 from services.energy_analysis import EnergyAnalysisCalculator
 from services.forecast_client import ForecastClient
 from services.historical_data import HistoricalEnergyData
-from services.optimization import EnergyOptimizer
+from services.optimization_client import OptimizationClient
+from services.decision_engine import DecisionEngine
 
 
 router = APIRouter()
@@ -14,7 +15,8 @@ router = APIRouter()
 forecast_client = ForecastClient()
 historical_data = HistoricalEnergyData("energy_data.csv")
 analysis_calculator = EnergyAnalysisCalculator(historical_data)
-optimizer = EnergyOptimizer()
+optimization_client = OptimizationClient()
+decision_engine = DecisionEngine()
 energy_analyst = EnergyAnalystAgent()
 recommendation_agent = RecommendationAgent()
 
@@ -40,9 +42,15 @@ async def get_energy_intelligence():
             zone_evidence=zone_evidence,
         )
 
-        optimization_results = optimizer.compare_strategies(
-            peak_consumption=forecast.peak_consumption
+        optimization_results = await optimization_client.optimize(
+            forecast.model_dump()
         )
+
+        decision = decision_engine.build_decision(
+            analysis=analysis.model_dump(),
+            optimization=optimization_results,
+        )
+
         recommendations = await recommendation_agent.recommend(
             analysis=analysis,
             optimization_results=optimization_results,
@@ -54,6 +62,7 @@ async def get_energy_intelligence():
             "statistical_analysis": statistical_analysis,
             "analysis": analysis.model_dump(),
             "optimization": optimization_results,
+            "decision": decision,
             "recommendations": recommendations.model_dump(),
         }
 
