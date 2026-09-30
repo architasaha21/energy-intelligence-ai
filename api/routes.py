@@ -54,6 +54,7 @@ async def get_energy_intelligence():
         recommendations = await recommendation_agent.recommend(
             analysis=analysis,
             optimization_results=optimization_results,
+            decision=decision,
         )
 
         return {

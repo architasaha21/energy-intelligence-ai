@@ -27,7 +27,8 @@ class RecommendationAgent:
     async def recommend(
         self,
         analysis: EnergyAnalysis,
-        optimization_results: list
+        optimization_results: dict,
+        decision: dict
     ) -> RecommendationResponse:
         """
         Generate actionable recommendations based on
@@ -36,9 +37,19 @@ class RecommendationAgent:
 
         context = {
             "analysis": analysis.model_dump(),
-            "optimization_results": optimization_results
+            "decision": decision,
+            "optimization": {
+                "status": optimization_results.get("status"),
+                "date": optimization_results.get("date"),
+                "savings": optimization_results.get("savings", {}),
+                "interventions": optimization_results.get("interventions", []),
+                "all_constraints_satisfied": optimization_results.get(
+                    "all_constraints_satisfied",
+                    False
+                ),
+                "robustness": optimization_results.get("robustness", {})
+            }
         }
-
         prompt = f"""
 You are a Recommendation Agent in an AI Climate and
 Energy Optimization system.
@@ -49,7 +60,12 @@ specific and practical energy-saving interventions.
 You are given:
 
 - Energy Analyst findings
-- Deterministic optimization simulations
+- Deterministic optimization results
+- Decision Engine output
+
+The Decision Engine is deterministic and must be respected.
+Use its decision_type and priority when framing recommendations.
+Do not override the Decision Engine with your own judgment.
 
 Your recommendations must:
 
@@ -108,7 +124,11 @@ Context:
                     "content": prompt
                 }
             ],
-            temperature=0.3
+            temperature=0.3,
+            max_completion_tokens=1000,
+            reasoning_effort="low",
+            include_reasoning=False,
+            response_format={"type": "json_object"}
         )
 
         # Extract the model response
@@ -122,6 +142,23 @@ Context:
 
         # Convert the response into structured JSON
         result = json.loads(text)
+
+        # Fill required fields if the model omits them
+        result.setdefault(
+            "overall_strategy",
+            "Apply the feasible optimization interventions identified "
+            "by the optimizer while respecting operational constraints."
+        )
+
+        result.setdefault(
+            "limitations",
+            [
+                "Savings are model-based estimates and are not guaranteed "
+                "in real-world operation.",
+                "Recommendations depend on the forecast, optimizer "
+                "assumptions, and available historical data."
+            ]
+        )
 
         # Validate the response using our Pydantic schema
         return RecommendationResponse(**result)
